@@ -1,0 +1,128 @@
+import random
+word_list = ["мама", "папа", "каша", "вертолет", "утюг", "косметика", "осьминог", "чекушка", "мамонт", "физика", "картошка"]
+def get_word():
+    return random.choice(word_list).upper()
+def display_hangman(tries):
+    stages = [  # финальное состояние: голова, торс, обе руки, обе ноги
+                '''
+                   --------
+                   |      |
+                   |      O
+                   |     \\|/
+                   |      |
+                   |     / \\
+                   -
+                ''',
+                # голова, торс, обе руки, одна нога
+                '''
+                   --------
+                   |      |
+                   |      O
+                   |     \\|/
+                   |      |
+                   |     / 
+                   -
+                ''',
+                # голова, торс, обе руки
+                '''
+                   --------
+                   |      |
+                   |      O
+                   |     \\|/
+                   |      |
+                   |      
+                   -
+                ''',
+                # голова, торс и одна рука
+                '''
+                   --------
+                   |      |
+                   |      O
+                   |     \\|
+                   |      |
+                   |     
+                   -
+                ''',
+                # голова и торс
+                '''
+                   --------
+                   |      |
+                   |      O
+                   |      |
+                   |      |
+                   |     
+                   -
+                ''',
+                # голова
+                '''
+                   --------
+                   |      |
+                   |      O
+                   |    
+                   |      
+                   |     
+                   -
+                ''',
+                # начальное состояние
+                '''
+                   --------
+                   |      |
+                   |      
+                   |    
+                   |      
+                   |     
+                   -
+                '''
+    ]
+    return stages[tries]
+word = get_word()
+def play(word):
+    word_completion = '_' * len(word)
+    guessed_letters = []  # список уже названных букв
+    tries = 6  # количество попыток
+    word1 = word
+
+    print('Давай играть в Угадайку слов!')
+    print(display_hangman(tries))
+    print(word_completion)
+    while '_' in word_completion:
+        if tries < 0:
+            print("К сожалению, ты проиграл.")
+            break
+        popytka = input("Введи букву или слово целиком: ").upper()
+        while popytka.isalpha()!=True:
+            popytka = input("Возможен ввод только буквенных символов. Попробуй еще раз: ").upper()
+        while popytka in guessed_letters:
+            popytka = input("Повторяешься! Попробуй еще раз: ").upper()
+        while len(popytka) != 1 and len(popytka) != len(word):
+            popytka = input("Нужно ввести либо одну букву, либо все слово целиком. Попробуй еще раз: ").upper()
+        if popytka == word1:
+            word_completion = popytka
+            print(word_completion)
+        elif popytka in word:
+            print("Есть такая буква!")
+            while popytka in word:
+                index_bukvy = word.find(popytka)
+                word_completion = word_completion[:index_bukvy] + popytka + word_completion[(index_bukvy+1):]
+                word = word[:index_bukvy] + '_' + word[(index_bukvy+1):]
+            print(word_completion)
+            guessed_letters.append(popytka)
+        elif popytka not in word:
+            print("Не угадал!")
+            print(word_completion)
+            print(display_hangman(tries))
+            tries-=1
+            guessed_letters.append(popytka)
+    if '_' not in word_completion:
+        print('Поздравляем, ты угадал слово! Ты ГЕНИЙ!')
+
+play(word)
+otvet = input("Хочешь сыграть еще? ")
+while otvet.upper() == "ДА":
+    word = get_word()
+    play(word)
+    otvet = input("Хочешь сыграть еще? ")
+print("Тогда пока!")
+
+
+
